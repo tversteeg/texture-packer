@@ -10,18 +10,19 @@ license:             GPL-3
 license-file:        LICENSE
 author:              Thomas Versteeg
 maintainer:          thomasversteeg@gmx.com
--- copyright:           
 category:            Development
 build-type:          Simple
 extra-source-files:  README.md
-cabal-version:       >=1.6
+cabal-version:       >= 1.6
+data-dir:            assets
+data-files:          application.ui
 
 source-repository head
   type:     git
   location: https://github.com/tversteeg/texture-packer
 
 executable texture-packer
-  hs-source-dirs:      src
-  main-is:             texture-packer.hs
-  build-depends:       base >=4.2 && <5.0,
-                       gtk3 >= 0.13.0.0 && < 0.14
+  hs-source-dirs:  src
+  main-is:         texture-packer.hs
+  build-depends:   base >= 4.2 && < 5.0,
+                   gtk3 >= 0.13.0.0 && < 0.14
