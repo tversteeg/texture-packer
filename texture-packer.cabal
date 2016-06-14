@@ -24,6 +24,4 @@ executable texture-packer
   hs-source-dirs:      src
   main-is:             texture-packer.hs
   build-depends:       base >=4.2 && <5.0,
-                       transformers >= 0.3.0.0 && < 0.4,
-                       gtk3 >= 0.13.0.0 && < 0.14,
-                       glib >= 0.13 && < 0.14
+                       gtk3 >= 0.13.0.0 && < 0.14
