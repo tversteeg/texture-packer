@@ -24,6 +24,7 @@ main = do
   widgetShowAll window
   mainGUI
 
+openSelectImageDialog :: Window -> IO ()
 openSelectImageDialog parentWindow = do
   dialog <- fileChooserDialogNew
     (Just $ "Select an image to add")
@@ -32,15 +33,41 @@ openSelectImageDialog parentWindow = do
     [("gtk-cancel", ResponseCancel),
      ("gtk-open", ResponseAccept)]
 
+  fileChooserSetLocalOnly dialog True
+
+  commonImageFilter <- fileFilterNew
+  fileFilterSetName commonImageFilter "Common image files (*.png, *.bmp, *.jpg)"
+  fileFilterAddPattern commonImageFilter "*.png"
+  fileFilterAddPattern commonImageFilter "*.bmp"
+  fileFilterAddPattern commonImageFilter "*.jpg"
+  fileFilterAddPattern commonImageFilter "*.jpeg"
+  fileChooserAddFilter dialog commonImageFilter
+
+  rawImageFilter <- fileFilterNew
+  fileFilterSetName rawImageFilter "Raw image files (*.raw)"
+  fileFilterAddPattern rawImageFilter "*.raw"
+  fileChooserAddFilter dialog rawImageFilter
+
+  customImageFilter <- fileFilterNew
+  fileFilterSetName customImageFilter "Custom image files (*.dfield)"
+  fileFilterAddPattern customImageFilter "*.dfield"
+  fileChooserAddFilter dialog customImageFilter
+
   previewLabel <- labelNew $ Just "Preview appears here"
   previewLabel `labelSetLineWrap` True
-  dialog `FileChooserSetPreviewWidget` previewLabel
+  dialog `fileChooserSetPreviewWidget` previewLabel
+  on dialog updatePreview $ do
+    previewFile <- fileChooserGetPreviewFilename dialog
+    previewLabel `labelSetText` case previewFile of
+      Nothing -> "Preview appears here"
+      (Just filename) -> "Preview file:\n" ++
+        show filename
 
   widgetShow dialog
 
   response <- dialogRun dialog
-  case response of
-    ResponseAccept -> do Just fileName <- fileChooserGetFilename dialog
-                         putStrLn $ "You selected the folder " ++ show fileName
-
   widgetHide dialog
+
+  uri <- fileChooserGetFilename dialog
+
+  return ()
