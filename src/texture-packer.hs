@@ -19,12 +19,16 @@ main = do
     mainQuit)
 
   addFileButton <- builderGetObject builder castToButton "addFileButton1"
-  on addFileButton buttonActivated (openSelectImageDialog window)
+  on addFileButton buttonActivated $ do 
+    response <- openSelectImageDialog window
+    putStrLn $ case response of
+      Just fileName -> fileName
+      _             -> "Closed"
 
   widgetShowAll window
   mainGUI
 
-openSelectImageDialog :: Window -> IO ()
+openSelectImageDialog :: Window -> IO (Maybe String)
 openSelectImageDialog parentWindow = do
   dialog <- fileChooserDialogNew
     (Just $ "Select an image to add")
@@ -36,11 +40,8 @@ openSelectImageDialog parentWindow = do
   fileChooserSetLocalOnly dialog True
 
   commonImageFilter <- fileFilterNew
-  fileFilterSetName commonImageFilter "Common image files (*.png, *.bmp, *.jpg)"
-  fileFilterAddPattern commonImageFilter "*.png"
-  fileFilterAddPattern commonImageFilter "*.bmp"
-  fileFilterAddPattern commonImageFilter "*.jpg"
-  fileFilterAddPattern commonImageFilter "*.jpeg"
+  fileFilterSetName commonImageFilter "Common image files"
+  fileFilterAddMimeType commonImageFilter "image/*"
   fileChooserAddFilter dialog commonImageFilter
 
   rawImageFilter <- fileFilterNew
@@ -53,21 +54,27 @@ openSelectImageDialog parentWindow = do
   fileFilterAddPattern customImageFilter "*.dfield"
   fileChooserAddFilter dialog customImageFilter
 
-  previewLabel <- labelNew $ Just "Preview appears here"
-  previewLabel `labelSetLineWrap` True
-  dialog `fileChooserSetPreviewWidget` previewLabel
+  allFilesFilter <- fileFilterNew
+  fileFilterSetName allFilesFilter "All files"
+  fileFilterAddPattern allFilesFilter "*"
+  fileChooserAddFilter dialog allFilesFilter
+
+  image <- imageNew
+  fileChooserSetPreviewWidget dialog image
+
   on dialog updatePreview $ do
-    previewFile <- fileChooserGetPreviewFilename dialog
-    previewLabel `labelSetText` case previewFile of
-      Nothing -> "Preview appears here"
-      (Just filename) -> "Preview file:\n" ++
-        show filename
+    file <- fileChooserGetPreviewFilename dialog
+    case file of
+         Nothing -> putStrLn "No file selected"
+         Just fpath -> imageSetFromFile image fpath
 
   widgetShow dialog
 
   response <- dialogRun dialog
-  widgetHide dialog
+  result <- case response of
+    ResponseAccept -> fileChooserGetFilename dialog
+    _              -> return Nothing
 
-  uri <- fileChooserGetFilename dialog
+  widgetDestroy dialog
 
-  return ()
+  return result
