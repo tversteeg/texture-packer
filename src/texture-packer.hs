@@ -3,6 +3,12 @@ module Main (main) where
 import Paths_texture_packer
 import Graphics.UI.Gtk
 
+data Image = Image {width :: Int,
+                    height :: Int,
+                    pixel :: String,
+                    file :: String,
+                    path :: String}
+
 main = do
   initGUI
 
@@ -18,15 +24,30 @@ main = do
     widgetDestroy window
     mainQuit)
 
+  imageList <- builderGetObject builder castToListStore "inputs"
+
   addFileButton <- builderGetObject builder castToButton "addFileButton1"
   on addFileButton buttonActivated $ do 
     response <- openSelectImageDialog window
     putStrLn $ case response of
-      Just fileName -> fileName
+      Just fileName -> addImageToList imageList fileName
       _             -> "Closed"
 
   widgetShowAll window
   mainGUI
+
+addImageToList :: ListStore -> String -> IO
+addImageToList list fileName = do
+  let getImage = return Image {
+      width = 10,
+      height = 10,
+      pixel = "RGBA",
+      file = "image",
+      path = fileName
+    }
+
+  getImage >>= listStorePrepend list
+
 
 openSelectImageDialog :: Window -> IO (Maybe String)
 openSelectImageDialog parentWindow = do
