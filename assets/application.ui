@@ -44,44 +44,6 @@
       </row>
     </data>
   </object>
-  <object class="GtkFileFilter" id="filefilter1">
-    <mime-types>
-      <mime-type>image/png</mime-type>
-    </mime-types>
-    <patterns>
-      <pattern>.raw</pattern>
-    </patterns>
-  </object>
-  <object class="GtkListStore" id="inputs">
-    <columns>
-      <!-- column-name Width -->
-      <column type="guint"/>
-      <!-- column-name Height -->
-      <column type="guint"/>
-      <!-- column-name Pixel -->
-      <column type="gchararray"/>
-      <!-- column-name File -->
-      <column type="gchararray"/>
-      <!-- column-name Path -->
-      <column type="gchararray"/>
-    </columns>
-    <data>
-      <row>
-        <col id="0">100</col>
-        <col id="1">100</col>
-        <col id="2">RGBA</col>
-        <col id="3" translatable="yes">pla.png</col>
-        <col id="4" translatable="yes">/usr/share/pla.png</col>
-      </row>
-      <row>
-        <col id="0">32</col>
-        <col id="1">32</col>
-        <col id="2" translatable="yes">BGR</col>
-        <col id="3" translatable="yes">bla.bmp</col>
-        <col id="4" translatable="yes">/usr/bla.bmp</col>
-      </row>
-    </data>
-  </object>
   <object class="GtkWindow" id="window">
     <property name="can_focus">False</property>
     <child>
@@ -257,86 +219,11 @@
                 <property name="hscrollbar_policy">never</property>
                 <property name="shadow_type">in</property>
                 <child>
-                  <object class="GtkTreeView">
-                    <property name="width_request">150</property>
+                  <object class="GtkTreeView" id="inputFiles1">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
-                    <property name="model">inputs</property>
-                    <property name="expander_column">filewidth</property>
-                    <property name="reorderable">True</property>
-                    <property name="rules_hint">True</property>
-                    <property name="search_column">3</property>
-                    <property name="enable_grid_lines">horizontal</property>
-                    <property name="tooltip_column">4</property>
-                    <property name="activate_on_single_click">True</property>
                     <child internal-child="selection">
                       <object class="GtkTreeSelection"/>
-                    </child>
-                    <child>
-                      <object class="GtkTreeViewColumn" id="filewidth">
-                        <property name="resizable">True</property>
-                        <property name="sizing">autosize</property>
-                        <property name="title" translatable="yes">Width</property>
-                        <property name="clickable">True</property>
-                        <property name="reorderable">True</property>
-                        <property name="sort_indicator">True</property>
-                        <property name="sort_column_id">0</property>
-                        <child>
-                          <object class="GtkCellRendererText"/>
-                          <attributes>
-                            <attribute name="text">0</attribute>
-                          </attributes>
-                        </child>
-                      </object>
-                    </child>
-                    <child>
-                      <object class="GtkTreeViewColumn" id="fileheight">
-                        <property name="resizable">True</property>
-                        <property name="title" translatable="yes">Height</property>
-                        <property name="clickable">True</property>
-                        <property name="reorderable">True</property>
-                        <property name="sort_indicator">True</property>
-                        <property name="sort_column_id">1</property>
-                        <child>
-                          <object class="GtkCellRendererText"/>
-                          <attributes>
-                            <attribute name="text">1</attribute>
-                          </attributes>
-                        </child>
-                      </object>
-                    </child>
-                    <child>
-                      <object class="GtkTreeViewColumn" id="fileformat">
-                        <property name="resizable">True</property>
-                        <property name="title" translatable="yes">Pixel Format</property>
-                        <property name="clickable">True</property>
-                        <property name="reorderable">True</property>
-                        <property name="sort_indicator">True</property>
-                        <property name="sort_column_id">2</property>
-                        <child>
-                          <object class="GtkCellRendererText"/>
-                          <attributes>
-                            <attribute name="text">2</attribute>
-                          </attributes>
-                        </child>
-                      </object>
-                    </child>
-                    <child>
-                      <object class="GtkTreeViewColumn" id="filepath">
-                        <property name="resizable">True</property>
-                        <property name="title" translatable="yes">File</property>
-                        <property name="expand">True</property>
-                        <property name="clickable">True</property>
-                        <property name="reorderable">True</property>
-                        <property name="sort_indicator">True</property>
-                        <property name="sort_column_id">3</property>
-                        <child>
-                          <object class="GtkCellRendererText"/>
-                          <attributes>
-                            <attribute name="text">3</attribute>
-                          </attributes>
-                        </child>
-                      </object>
                     </child>
                   </object>
                 </child>
@@ -566,5 +453,13 @@
         </child>
       </object>
     </child>
+  </object>
+  <object class="GtkFileFilter" id="filefilter1">
+    <mime-types>
+      <mime-type>image/png</mime-type>
+    </mime-types>
+    <patterns>
+      <pattern>.raw</pattern>
+    </patterns>
   </object>
 </interface>

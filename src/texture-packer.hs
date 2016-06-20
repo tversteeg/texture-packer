@@ -20,34 +20,77 @@ main = do
   on window objectDestroy mainQuit
 
   quitMenuItem <- builderGetObject builder castToMenuItem "quitMenuItem1"
-  on quitMenuItem menuItemActivated (do
+  on quitMenuItem menuItemActivated $ do
     widgetDestroy window
-    mainQuit)
+    mainQuit
 
-  imageList <- builderGetObject builder castToListStore "inputs"
+  inputFileView <- builderGetObject builder castToTreeView "inputFiles1"
+  inputFileStore <- listStoreNew []
+  treeViewSetModel inputFileView inputFileStore
+  setupInputList inputFileView inputFileStore
 
   addFileButton <- builderGetObject builder castToButton "addFileButton1"
-  on addFileButton buttonActivated $ do 
-    response <- openSelectImageDialog window
-    putStrLn $ case response of
-      Just fileName -> addImageToList imageList fileName
-      _             -> "Closed"
+  on addFileButton buttonActivated $
+    openSelectImageDialog window >>= addImageToList inputFileStore
 
   widgetShowAll window
   mainGUI
 
-addImageToList :: ListStore -> String -> IO
+setupInputList view store = do
+  treeViewSetHeadersVisible view True
+
+  renderer1 <- cellRendererTextNew
+  col1 <- treeViewColumnNew
+  treeViewColumnPackStart col1 renderer1 True
+  cellLayoutSetAttributes col1 renderer1 store
+    $ \row -> [ cellText := file row ]
+  treeViewColumnSetTitle col1 "File"
+  treeViewAppendColumn view col1
+
+  renderer2 <- cellRendererTextNew
+  col2 <- treeViewColumnNew
+  treeViewColumnPackStart col2 renderer2 True
+  cellLayoutSetAttributes col2 renderer2 store
+    $ \row -> [ cellText := show (width row) ]
+  treeViewColumnSetTitle col2 "Width"
+  treeViewAppendColumn view col2
+
+  renderer3 <- cellRendererTextNew
+  col3 <- treeViewColumnNew
+  treeViewColumnPackStart col3 renderer3 True
+  cellLayoutSetAttributes col3 renderer3 store
+    $ \row -> [ cellText := show (height row) ]
+  treeViewColumnSetTitle col3 "Height"
+  treeViewAppendColumn view col3
+
+  renderer4 <- cellRendererTextNew
+  col4 <- treeViewColumnNew
+  treeViewColumnPackStart col4 renderer4 True
+  cellLayoutSetAttributes col4 renderer4 store
+    $ \row -> [ cellText := path row ]
+  treeViewColumnSetTitle col4 "Path"
+  treeViewAppendColumn view col4
+
+  renderer5 <- cellRendererTextNew
+  col5 <- treeViewColumnNew
+  treeViewColumnPackStart col5 renderer5 True
+  cellLayoutSetAttributes col5 renderer5 store
+    $ \row -> [ cellText := pixel row ]
+  treeViewColumnSetTitle col5 "Format"
+  treeViewAppendColumn view col5
+
 addImageToList list fileName = do
-  let getImage = return Image {
-      width = 10,
-      height = 10,
-      pixel = "RGBA",
-      file = "image",
-      path = fileName
-    }
-
-  getImage >>= listStorePrepend list
-
+  case fileName of
+    Just file -> do
+      let getImage = return Image {
+          width = 10,
+          height = 10,
+          pixel = "RGBA",
+          file = "image",
+          path = file
+        }
+      getImage >>= listStorePrepend list
+    _ -> return ()
 
 openSelectImageDialog :: Window -> IO (Maybe String)
 openSelectImageDialog parentWindow = do
