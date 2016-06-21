@@ -29,9 +29,18 @@ main = do
   treeViewSetModel inputFileView inputFileStore
   setupInputList inputFileView inputFileStore
 
+  on inputFileView cursorChanged $ do
+    (path, _) <- treeViewGetCursor inputFileView
+    putStrLn (show path)
+
   addFileButton <- builderGetObject builder castToButton "addFileButton1"
   on addFileButton buttonActivated $
     openSelectImageDialog window >>= addImageToList inputFileStore
+
+  removeFileButton <- builderGetObject builder castToButton "removeFileButton1"
+  on removeFileButton buttonActivated $ do
+    index <- treeViewGetCursor inputFileView
+    listStoreRemove inputFileStore index
 
   widgetShowAll window
   mainGUI
@@ -86,7 +95,7 @@ addImageToList list fileName = do
           width = 10,
           height = 10,
           pixel = "RGBA",
-          file = "image",
+          file = "Image",
           path = file
         }
       getImage >>= listStorePrepend list
