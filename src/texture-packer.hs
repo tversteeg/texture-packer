@@ -39,8 +39,10 @@ main = do
 
   removeFileButton <- builderGetObject builder castToButton "removeFileButton1"
   on removeFileButton buttonActivated $ do
-    index <- treeViewGetCursor inputFileView
-    listStoreRemove inputFileStore index
+    treeSelection <- treeViewGetSelection inputFileView
+    indices <- treeSelectionGetSelectedRows $ treeSelection
+    sequence_ $ map (listStoreRemove inputFileStore) $ map head indices
+    treeSelectionUnselectAll treeSelection
 
   widgetShowAll window
   mainGUI
