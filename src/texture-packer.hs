@@ -29,9 +29,14 @@ main = do
   treeViewSetModel inputFileView inputFileStore
   setupInputList inputFileView inputFileStore
 
+  previewImage <- builderGetObject builder castToImage "preview1"
+
   on inputFileView cursorChanged $ do
-    (path, _) <- treeViewGetCursor inputFileView
-    putStrLn (show path)
+    tree <- treeViewGetSelection inputFileView
+    selection <- treeSelectionGetSelectedRows tree
+    let sel = head (head selection)
+    row <- listStoreGetValue inputFileStore sel
+    imageSetFromFile previewImage $ path row
 
   addFileButton <- builderGetObject builder castToButton "addFileButton1"
   on addFileButton buttonActivated $
